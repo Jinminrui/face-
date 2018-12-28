@@ -18,11 +18,13 @@
       action=""
     >
       <el-button
+        v-waves
         slot="trigger"
         size="small"
         type="primary"
       >选取文件</el-button>
       <el-button
+        v-waves
         style="margin-left: 10px;"
         size="small"
         type="success"
@@ -58,7 +60,9 @@
 
 <script>
 import { compare } from '@/api/face'
+import waves from '@/directive/waves'
 export default {
+  directives: { waves },
   data() {
     return {
       fileList: [],
@@ -98,7 +102,18 @@ export default {
       return this.$confirm(`确定移除 ${file.name}？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
+        type: 'warning',
+        center: true
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     },
     handleExceed(files, fileList) {

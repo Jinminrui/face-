@@ -38,7 +38,7 @@
         :sm="24"
         :lg="12"
       >
-        <pie-chart />
+        <pie-chart style="margin:16px" />
       </el-col>
     </el-row>
   </div>

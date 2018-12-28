@@ -19,7 +19,7 @@
             name="username"
             type="text"
             auto-complete="on"
-            placeholder="username"
+            placeholder="用户名"
           />
         </el-form-item>
         <el-form-item prop="password">
@@ -31,7 +31,7 @@
             v-model="loginForm.password"
             name="password"
             auto-complete="on"
-            placeholder="password"
+            placeholder="密码"
             @keyup.enter.native="handleLogin"
           />
           <span
@@ -43,6 +43,7 @@
         </el-form-item>
         <el-form-item>
           <el-button
+            v-waves
             :loading="loading"
             type="primary"
             style="width:100%;"
@@ -53,6 +54,7 @@
         </el-form-item>
         <el-form-item>
           <el-button
+            v-waves
             :loading="loading"
             type="success"
             style="width:100%;"
@@ -75,7 +77,7 @@
           :rules="formRules"
           :model="temp"
           label-position="left"
-          label-width="80px"
+          label-width="100px"
           style="width: 100%"
           status-icon
         >
@@ -103,22 +105,32 @@
               type="password"
             />
           </el-form-item>
-          <el-form-item label="电话">
+          <el-form-item
+            label="电话"
+            prop="phone"
+          >
             <el-input v-model="temp.phone" />
           </el-form-item>
-          <el-form-item label="邮箱">
-            <el-input v-model="temp.email" />
+          <el-form-item
+            label="邮箱"
+            prop="email"
+          >
+            <el-input v-model="temp.mail" />
           </el-form-item>
         </el-form>
         <div
           slot="footer"
           class="dialog-footer"
         >
-          <el-button @click="registerFormVisiable = false">取消</el-button>
           <el-button
+            v-waves
+            @click="registerFormVisiable = false"
+          >取消</el-button>
+          <el-button
+            v-waves
             type="primary"
             @click="registerUser"
-          >注册并登陆</el-button>
+          >注册</el-button>
         </div>
       </el-dialog>
     </div>
@@ -128,9 +140,11 @@
 
 <script>
 // import { isvalidUsername } from '@/utils/validate'
+import waves from '@/directive/waves'
 import { registerUser } from '@/api/register'
 export default {
   name: 'Login',
+  directives: { waves },
   data() {
     // const validateUsername = (rule, value, callback) => {
     //   if (!isvalidUsername(value)) {
@@ -139,7 +153,7 @@ export default {
     //     callback()
     //   }
     // }
-    var validatePass = (rule, value, callback) => {
+    const validatePass = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入密码'))
       } else {
@@ -149,7 +163,7 @@ export default {
         callback()
       }
     }
-    var validatePass2 = (rule, value, callback) => {
+    const validatePass2 = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请再次输入密码'))
       } else if (value !== this.temp.password) {
@@ -158,6 +172,7 @@ export default {
         callback()
       }
     }
+
     return {
       loginForm: {
         username: '',
@@ -168,12 +183,14 @@ export default {
         password: [{ required: true, trigger: 'blur', message: '密码不能为空！' }]
       },
       temp: {
-        username: '',
-        password: '',
-        checkPass: ''
+        username: null,
+        password: null,
+        checkPass: null,
+        phone: null,
+        mail: null
       },
       formRules: {
-        username: [{ required: true, trgger: 'blur', message: '用户名不能为空' }],
+        username: [{ required: true, trigger: 'blur', message: '用户名不能为空' }],
         password: [{ required: true, trigger: 'blur', validator: validatePass }],
         checkPass: [
           { required: true, validator: validatePass2, trigger: 'blur' }

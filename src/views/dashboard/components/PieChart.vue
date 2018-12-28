@@ -59,12 +59,12 @@ export default {
         legend: {
           left: 'center',
           bottom: '10',
-          data: ['Vue', 'SpringBoot', 'Element-UI', 'Face++', 'Css']
+          data: ['Vue', 'SpringBoot', 'Element', 'Face++', 'Css']
         },
         calculable: true,
         series: [
           {
-            name: 'WEEKLY WRITE ARTICLES',
+            name: '技术栈',
             type: 'pie',
             roseType: 'radius',
             radius: [15, 95],
@@ -72,7 +72,7 @@ export default {
             data: [
               { value: 37, name: 'Vue' },
               { value: 23, name: 'SpringBoot' },
-              { value: 10, name: 'Element-UI' },
+              { value: 10, name: 'Element' },
               { value: 25, name: 'Face++' },
               { value: 5, name: 'Css' }
             ],

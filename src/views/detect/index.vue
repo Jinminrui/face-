@@ -18,11 +18,13 @@
       action=""
     >
       <el-button
+        v-waves
         slot="trigger"
         size="small"
         type="primary"
       >选取文件</el-button>
       <el-button
+        v-waves
         style="margin-left: 10px;"
         size="small"
         type="success"
@@ -81,7 +83,7 @@
               v-for="(value, key) in result.emotions"
               :key="key"
             >
-              <span>{{ key }} : {{ value }}</span>
+              <span>{{ key }} : {{ value }}%</span>
             </div>
           </el-collapse-item>
         </el-collapse>
@@ -92,8 +94,10 @@
 
 <script>
 import { detect } from '@/api/face'
+import waves from '@/directive/waves'
 
 export default {
+  directives: { waves },
   data() {
     return {
       fileList: [],
@@ -130,7 +134,18 @@ export default {
       return this.$confirm(`确定移除 ${file.name}？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
+        type: 'warning',
+        center: true
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     },
     handleExceed(files, fileList) {
@@ -141,13 +156,23 @@ export default {
       const pd = new FormData()
       pd.append('file', file)
       detect(pd).then((res) => {
-        this.showResult = true
-        this.faceAttributes = res.data.faces[0].attributes
-        this.result.gender = this.faceAttributes.gender.value
-        this.result.age = this.faceAttributes.age.value
-        this.result.maleBeauty = this.faceAttributes.beauty.male_score
-        this.result.femaleBeauty = this.faceAttributes.beauty.female_score
-        this.result.emotions = this.faceAttributes.emotion
+        if (res.data.faces.length !== 0) {
+          this.showResult = true
+          this.faceAttributes = res.data.faces[0].attributes
+          this.result.gender = this.faceAttributes.gender.value
+          this.result.age = this.faceAttributes.age.value
+          this.result.maleBeauty = this.faceAttributes.beauty.male_score
+          this.result.femaleBeauty = this.faceAttributes.beauty.female_score
+          this.result.emotions = this.faceAttributes.emotion
+        } else {
+          this.fileList = []
+          this.imgUrl = ''
+          this.$notify({
+            title: '提示',
+            message: '未检测到人脸，请重新上传',
+            duration: 3600
+          })
+        }
       })
     }
   }
