@@ -41,6 +41,24 @@
             <svg-icon icon-class="eye" />
           </span>
         </el-form-item>
+
+        <!-- 验证码 -->
+        <el-form-item>
+          <el-input
+            v-model="inputIdentifyCode"
+            placeholder="验证码"
+          />
+        </el-form-item>
+
+        <div class="code-wrapper">
+          <div
+            class="code"
+            @click="refreshCode"
+          >
+            <s-identify :identify-code="identifyCode" />
+          </div>
+        </div>
+
         <el-form-item>
           <el-button
             v-waves
@@ -142,9 +160,11 @@
 // import { isvalidUsername } from '@/utils/validate'
 import waves from '@/directive/waves'
 import { registerUser } from '@/api/register'
+import SIdentify from '@/components/identify/identify'
 export default {
   name: 'Login',
   directives: { waves },
+  components: { SIdentify },
   data() {
     // const validateUsername = (rule, value, callback) => {
     //   if (!isvalidUsername(value)) {
@@ -174,6 +194,9 @@ export default {
     }
 
     return {
+      identifyCodes: '1234567890',
+      identifyCode: '',
+      inputIdentifyCode: '',
       loginForm: {
         username: '',
         password: ''
@@ -210,7 +233,26 @@ export default {
       immediate: true
     }
   },
+  mounted() {
+    this.identifyCode = ''
+    this.makeCode(this.identifyCodes, 4)
+  },
   methods: {
+    randomNum(min, max) {
+      return Math.floor(Math.random() * (max - min) + min)
+    },
+    refreshCode() {
+      this.identifyCode = ''
+      this.makeCode(this.identifyCodes, 4)
+    },
+    makeCode(o, l) {
+      for (let i = 0; i < l; i++) {
+        this.identifyCode += this.identifyCodes[
+          this.randomNum(0, this.identifyCodes.length)
+        ]
+      }
+      console.log(this.identifyCode)
+    },
     showPwd() {
       if (this.pwdType === 'password') {
         this.pwdType = ''
@@ -219,20 +261,27 @@ export default {
       }
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store.dispatch('Login', this.loginForm).then(() => {
-            this.loading = false
-            this.$router.push({ path: this.redirect || '/' })
-          }).catch(() => {
-            this.loading = false
-          })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
+      if (this.identifyCode === this.inputIdentifyCode) {
+        this.$refs.loginForm.validate(valid => {
+          if (valid) {
+            this.loading = true
+            this.$store.dispatch('Login', this.loginForm).then(() => {
+              this.loading = false
+              this.$router.push({ path: this.redirect || '/' })
+            }).catch(() => {
+              this.loading = false
+            })
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
+      } else {
+        this.$notify.error({
+          title: '错误',
+          message: '验证码输入错误'
+        })
+      }
     },
     resetTemp() {
       this.temp = {
@@ -367,6 +416,12 @@ $light_gray: #eee;
     color: $dark_gray;
     cursor: pointer;
     user-select: none;
+  }
+  .code-wrapper {
+    margin: 8px 0;
+    .code {
+      right: 8px;
+    }
   }
 }
 </style>

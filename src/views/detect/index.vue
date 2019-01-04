@@ -167,7 +167,7 @@ export default {
         } else {
           this.fileList = []
           this.imgUrl = ''
-          this.$notify({
+          this.$notify.info({
             title: '提示',
             message: '未检测到人脸，请重新上传',
             duration: 3600
